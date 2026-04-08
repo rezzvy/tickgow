@@ -1,0 +1,35 @@
+{
+  "name": "tickgow",
+  "version": "1.0.0",
+  "description": "Date comparison and human-readable time formatting.",
+  "main": "dist/tickgow.node.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rezzvy/tickgow.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rezzvy/tickgow/issues"
+  },
+  "homepage": "https://github.com/rezzvy/tickgow#readme",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build:browser": "esbuild ./src/tickgow.js --bundle --minify --platform=browser --format=iife --global-name=Tickgow --outfile=dist/tickgow.min.js",
+    "build:node": "esbuild ./src/tickgow.js --bundle --minify --platform=node --format=cjs --outfile=dist/tickgow.node.js",
+    "build": "npm run build:browser && npm run build:node",
+    "test": "node --test"
+  },
+  "keywords": [
+    "time",
+    "time-elapsed",
+    "time-calculation",
+    "time-comparison"
+  ],
+  "author": "rezzvy",
+  "license": "MIT",
+  "type": "commonjs",
+  "devDependencies": {
+    "esbuild": "^0.27.4"
+  }
+}
