@@ -100,7 +100,7 @@ class Tickgow {
 
         while (true) {
             const next = new Date(current);
-            next.setMonth(next.getMonth() + 1);
+            next.setUTCMonth(next.getUTCMonth() + 1);
 
             if (next <= later) {
                 totalMonths++;
@@ -111,7 +111,7 @@ class Tickgow {
         }
 
         const remainingMs = later - current;
-        const daysInMonth = this.#getDaysInMonth(current.getFullYear(), current.getMonth());
+        const daysInMonth = this.#getDaysInMonth(current.getUTCFullYear(), current.getUTCMonth());
         const msInAMonth = daysInMonth * 24 * 60 * 60 * 1000;
 
         const fractionalMonth = remainingMs / msInAMonth;
@@ -127,7 +127,7 @@ class Tickgow {
 
         while (true) {
             const nextYear = new Date(current);
-            nextYear.setFullYear(nextYear.getFullYear() + 1);
+            nextYear.setUTCFullYear(nextYear.getUTCFullYear() + 1);
 
             if (nextYear <= later) {
                 years++;
@@ -137,7 +137,7 @@ class Tickgow {
 
         while (true) {
             const nextMonth = new Date(current);
-            nextMonth.setMonth(nextMonth.getMonth() + 1);
+            nextMonth.setUTCMonth(nextMonth.getUTCMonth() + 1);
 
             if (nextMonth <= later) {
                 months++;
@@ -145,10 +145,10 @@ class Tickgow {
             } else break;
         }
 
-        const daysInMonth = this.#getDaysInMonth(current.getFullYear(), current.getMonth());
+        const daysInMonth = this.#getDaysInMonth(current.getUTCFullYear(), current.getUTCMonth());
         while (true) {
             const nextDay = new Date(current);
-            nextDay.setDate(nextDay.getDate() + 1);
+            nextDay.setUTCDate(nextDay.getUTCDate() + 1);
 
             if (nextDay <= later && days < daysInMonth - 1) {
                 days++;
@@ -166,7 +166,7 @@ class Tickgow {
     }
 
     static #getDaysInMonth(year, month) {
-        return new Date(year, month + 1, 0).getDate();
+        return new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
     }
 }
 
