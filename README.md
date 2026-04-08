@@ -19,7 +19,7 @@ Tickgow lets you compare two dates, giving you detailed calculated outputs on ex
 Include the script tag:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/rezzvy/tickgow@94831b1/dist/tickgow.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/rezzvy/tickgow@87523e2/dist/tickgow.min.js"></script>
 ```
 
 #### Node
