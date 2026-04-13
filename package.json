@@ -1,6 +1,6 @@
 {
   "name": "tickgow",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Date comparison and human-readable time formatting.",
   "main": "dist/tickgow.node.js",
   "repository": {
