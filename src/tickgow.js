@@ -94,20 +94,28 @@ class Tickgow {
         };
     }
 
+    static #safeAddMonths(date, monthsToAdd) {
+        const d = new Date(date);
+        const targetMonth = d.getUTCMonth() + monthsToAdd;
+        const targetYear = d.getUTCFullYear() + Math.floor(targetMonth / 12);
+
+        const normalizedMonth = ((targetMonth % 12) + 12) % 12;
+        const daysInTargetMonth = this.#getDaysInMonth(targetYear, normalizedMonth);
+
+        d.setUTCFullYear(targetYear);
+        d.setUTCDate(Math.min(d.getUTCDate(), daysInTargetMonth));
+        d.setUTCMonth(normalizedMonth);
+
+        return d;
+    }
+
     static #calculateRawCalendarUnits(earlier, later) {
-        let totalMonths = 0;
-        let current = new Date(earlier);
+        let totalMonths = (later.getUTCFullYear() - earlier.getUTCFullYear()) * 12 + (later.getUTCMonth() - earlier.getUTCMonth());
+        let current = this.#safeAddMonths(earlier, totalMonths);
 
-        while (true) {
-            const next = new Date(current);
-            next.setUTCMonth(next.getUTCMonth() + 1);
-
-            if (next <= later) {
-                totalMonths++;
-                current = next;
-            } else {
-                break;
-            }
+        if (current > later) {
+            totalMonths--;
+            current = this.#safeAddMonths(earlier, totalMonths);
         }
 
         const remainingMs = later - current;
@@ -122,45 +130,31 @@ class Tickgow {
     }
 
     static #calculateNormalized(earlier, later) {
-        let years = 0, months = 0, days = 0;
-        let current = new Date(earlier);
+        let years = later.getUTCFullYear() - earlier.getUTCFullYear();
+        let current = this.#safeAddMonths(earlier, years * 12);
 
-        while (true) {
-            const nextYear = new Date(current);
-            nextYear.setUTCFullYear(nextYear.getUTCFullYear() + 1);
-
-            if (nextYear <= later) {
-                years++;
-                current = nextYear;
-            } else break;
+        if (current > later) {
+            years--;
+            current = this.#safeAddMonths(earlier, years * 12);
         }
 
-        while (true) {
-            const nextMonth = new Date(current);
-            nextMonth.setUTCMonth(nextMonth.getUTCMonth() + 1);
+        let months = (later.getUTCFullYear() - current.getUTCFullYear()) * 12 + (later.getUTCMonth() - current.getUTCMonth());
+        let tempMonth = this.#safeAddMonths(current, months);
 
-            if (nextMonth <= later) {
-                months++;
-                current = nextMonth;
-            } else break;
-        }
-
-        const daysInMonth = this.#getDaysInMonth(current.getUTCFullYear(), current.getUTCMonth());
-        while (true) {
-            const nextDay = new Date(current);
-            nextDay.setUTCDate(nextDay.getUTCDate() + 1);
-
-            if (nextDay <= later && days < daysInMonth - 1) {
-                days++;
-                current = nextDay;
-            } else break;
+        if (tempMonth > later) {
+            months--;
+            current = this.#safeAddMonths(current, months);
+        } else {
+            current = tempMonth;
         }
 
         const remainingMs = later - current;
 
-        const hours = Math.floor(remainingMs / (1000 * 60 * 60));
-        const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((remainingMs % (1000 * 60)) / 1000);
+        const days = Math.floor(remainingMs / (1000 * 60 * 60 * 24));
+        const msWithoutDays = remainingMs % (1000 * 60 * 60 * 24);
+        const hours = Math.floor(msWithoutDays / (1000 * 60 * 60));
+        const minutes = Math.floor((msWithoutDays % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((msWithoutDays % (1000 * 60)) / 1000);
 
         return { years, months, days, hours, minutes, seconds };
     }
